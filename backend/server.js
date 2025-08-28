@@ -1,15 +1,22 @@
-import dotenv from "dotenv"
-import express from "express"
-dotenv.config()
+import dotenv from "dotenv";
+import express from "express";
+import { dbConnect } from "./config/db.js";
+import userRoutes from './routes/user.routes.js'
+dotenv.config();
 
-const app = express()
+const app = express();
 
-const PORT = process.env.PORT  || PORT
+const PORT = process.env.PORT || 4011;
+dbConnect();
 
-app.get('/',(req,res) => {
-    res.send("Welcome to the Store")
-})
+app.use(express.json())
 
-app.listen(PORT , ()=>{
-    console.log(`Server running at port : ${PORT}`);
-})
+app.get("/", (req, res) => {
+  res.send("Welcome to the Store");
+});
+
+app.use("/api/auth",userRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Server running at port : ${PORT}`);
+});
