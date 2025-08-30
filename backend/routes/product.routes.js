@@ -3,7 +3,7 @@ import {
   isAuthenticated,
   authorizeRoles,
 } from "../middlewares/auth.middleware.js";
-import { addProduct, getProduct } from "../controllers/product.controller.js";
+import { addProduct, getProduct, getProductById } from "../controllers/product.controller.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import { addProductSchema } from "../validation/product.validation.js";
 
@@ -16,7 +16,7 @@ router.post(
   validate(addProductSchema),
   addProduct
 );
-
 router.get("/products", isAuthenticated, getProduct);
+router.get('/product/:id' , isAuthenticated , getProductById)
 
 export default router;
