@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const verifyToken = (req, res, next) => {
+export const isAuthenticated = (req, res, next) => {
   const authHeader = req.headers.authorization || req.headers.Authorization;
 
   if (!authHeader?.startsWith("Bearer ")) {
@@ -19,4 +19,17 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-export  default verifyToken
+export const authorizeRoles = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user?.role) {
+      return res.status(403).json({ message: "User role not available" });
+    }
+
+    const userRole = req.user.role;
+
+    if (!allowedRoles.includes(userRole)) {
+      return res.status(403).json({ message: "You are not authorized" });
+    }
+    next();
+  };
+};
