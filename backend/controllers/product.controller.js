@@ -23,12 +23,28 @@ export const getProduct = async (req, res) => {
       return res.status(404).json({ message: "No product found" });
     }
     res.status(200).json({
-      message: "Products fetched successfully", 
+      message: "Products fetched successfully",
       count: allProducts.length,
-      products: allProducts
+      products: allProducts,
     });
   } catch (error) {
     console.error("Error in fetching products: ", error);
     res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const getProductById = async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+   res.status(200).json({ message: "Product found", product });
+
+  } catch (error) {
+    console.error("Error in finding the product : ", error);
+    return res.status(500).json({ message: "Something went wrong" });
   }
 };
