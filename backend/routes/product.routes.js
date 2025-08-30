@@ -17,6 +17,6 @@ router.post(
   addProduct
 );
 router.get("/products", isAuthenticated, getProduct);
-router.get('/product/:id' , isAuthenticated , getProductById)
+router.get('/products/:id' , isAuthenticated , getProductById)
 
 export default router;
