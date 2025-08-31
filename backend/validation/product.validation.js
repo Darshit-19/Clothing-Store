@@ -45,3 +45,24 @@ export const addProductSchema = z.object({
     )
     .min(1, "At least one size and stock option must be provided"),
 });
+
+export const updateProductSchema = z.object({
+  price: z.number().min(0, "Price can not be negative number").optional(),
+  image: z.string().url().optional(),
+  sizeStock: z
+    .array(
+      z.object({
+        size: z.enum(ALLOWED_SIZES, {
+          errorMap: () => ({
+            message: `Invalid size provided. Allowed sizes are ${ALLOWED_SIZES.join(
+              ","
+            )}`,
+          }),
+        }),
+        quantity: z
+          .number({ required_error: "Quantity is required for each size" })
+          .min(0, "Qauntity cannot be negative number"),
+      })
+    )
+    .optional(),
+});
