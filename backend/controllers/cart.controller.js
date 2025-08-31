@@ -51,9 +51,28 @@ export const addToCart = async (req, res) => {
 
     await cart.save();
     res.status(200).json({ message: "Product added to cart", cart });
-    
   } catch (error) {
     console.error("Error adding product to cart:", error.message);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const viewCart = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User Id is required" });
+    }
+
+    const cart = await Cart.findone({userId}).populate("items.productId");
+    if (!cart || cart.item.length === 0) {
+      return res.status(404).json({ message: "Cart not found or empty" });
+    }
+
+    res.status(200).json({ message: "Cart found", yourCart: cart });
+  } catch (error) {
+    console.error("Error in finding your cart", error.message);
     res.status(500).json({ message: "Something went wrong" });
   }
 };
