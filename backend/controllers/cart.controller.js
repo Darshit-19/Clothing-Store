@@ -132,3 +132,21 @@ export const updateCart = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+export const deleteCart = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const cart = await Cart.findOne({ userId, status: "active" });
+    if (!cart) {
+      return res.status(404).json({ message: "No active cart for the user" });
+    }
+    cart.items = [];
+    await cart.save();
+
+    res.status(200).json({ message: "Cart deleted succesfully" });
+  } catch (error) {
+    console.error("Error in deleting the cart", error.message);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
