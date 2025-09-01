@@ -20,7 +20,7 @@ const router = express.Router();
 
 //Add product
 router.post(
-  "/products",
+  "/",
   isAuthenticated,
   authorizeRoles("admin"),
   validate(addProductSchema),
@@ -28,14 +28,14 @@ router.post(
 );
 
 //Get all products
-router.get("/products", isAuthenticated, getProduct);
+router.get("/", isAuthenticated, getProduct);
 
 //Get product by id
-router.get("/products/:id", isAuthenticated, getProductById);
+router.get("/:id", isAuthenticated, getProductById);
 
-//Update product 
+//Update product
 router.patch(
-  "/products/:id",
+  "/:id",
   isAuthenticated,
   authorizeRoles("admin"),
   validate(updateProductSchema),
@@ -43,11 +43,6 @@ router.patch(
 );
 
 //Delete product
-router.delete(
-  "/products/:id",
-  isAuthenticated,
-  authorizeRoles("admin"),
-  deleteProduct
-);
+router.delete("/:id", isAuthenticated, authorizeRoles("admin"), deleteProduct);
 
 export default router;
