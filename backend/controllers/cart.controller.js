@@ -1,5 +1,5 @@
-import Cart from "../models/cart.model";
-import Product from "../models/product.model";
+import Cart from "../models/cart.model.js";
+import Product from "../models/product.model.js";
 
 export const addToCart = async (req, res) => {
   try {
@@ -24,7 +24,7 @@ export const addToCart = async (req, res) => {
         .json({ message: "Not enough stock for selected size" });
     }
 
-    let cart = await Cart.findOne({ userId, status: "active" });
+    let cart = await Cart.findOne({ userId, status: "active" })
 
     if (!cart) {
       cart = new Cart({
@@ -44,12 +44,13 @@ export const addToCart = async (req, res) => {
     );
 
     if (existingItem) {
-      existingItem.quantity += quantity;
+      existingItem.quantity += Number(quantity);
     } else {
       cart.items.push({ productId, selectedSize, quantity });
     }
 
     await cart.save();
+     await cart.populate("items.productId", "name")
     res.status(200).json({ message: "Product added to cart", cart });
   } catch (error) {
     console.error("Error adding product to cart:", error.message);
@@ -65,8 +66,8 @@ export const viewCart = async (req, res) => {
       return res.status(400).json({ message: "User Id is required" });
     }
 
-    const cart = await Cart.findone({ userId }).populate("items.productId");
-    if (!cart || cart.item.length === 0) {
+    const cart = await Cart.findOne({ userId }).populate("items.productId" , "name");
+    if (!cart || cart.items.length === 0) {
       return res.status(404).json({ message: "Cart not found or empty" });
     }
 
