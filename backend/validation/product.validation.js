@@ -24,9 +24,8 @@ export const addProductSchema = z.object({
   subCategory: z.string().optional(), // Optional field
 
   image: z
-    .string({ required_error: "Image is required" })
-    .min(1, "Image cannot be empty")
-    .url("Image must be a valid URL"),
+    .array(z.string({ required_error: "Image is required" }))
+    .min(1, "Image cannot be empty"),
 
   sizeStock: z
     .array(
