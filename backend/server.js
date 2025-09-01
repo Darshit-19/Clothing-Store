@@ -3,6 +3,7 @@ import express from "express";
 import { dbConnect } from "./config/db.js";
 import userRoutes from './routes/user.routes.js'
 import productRoutes from './routes/product.routes.js'
+import cartRoutes from './routes/cart.routes.js'
 dotenv.config();
 
 const app = express();
@@ -17,7 +18,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth",userRoutes);
-app.use("/api",productRoutes)
+app.use("/api/products",productRoutes)
+app.use("/api/cart",cartRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server running at port : ${PORT}`);
