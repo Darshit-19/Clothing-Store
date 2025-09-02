@@ -40,10 +40,10 @@ export const placeOrder = async (req, res) => {
 
 export const viewMyOrder = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user.id;
 
-    const orders = await Order.findOne({ userId })
-      .populate("items.productId", "name", "price", "image")
+    const orders = await Order.find({ userId })
+      .populate("items.productId", "name price image")
       .sort({ createdAt: -1 });
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: "No order for the user" });
@@ -91,7 +91,7 @@ export const cancelOrder = async (req, res) => {
     }
 
     order.status = "cancelled";
-    await Order.save();
+    await order.save();
 
     res.status(200).json({ message: "Order cancelled succesfully" });
   } catch (error) {
