@@ -61,7 +61,7 @@ export const viewMyOrder = async (req, res) => {
 export const viewAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate("userId", "name email") 
+      .populate("userId", "name email")
       .populate("items.productId", "name price")
       .sort({ createdAt: -1 });
     if (!orders || orders.length === 0) {
@@ -71,5 +71,60 @@ export const viewAllOrders = async (req, res) => {
   } catch (error) {
     console.error("Error in fetching orders", error.message);
     res.status(500).json({ message: "Somthing went wrong" });
+  }
+};
+
+export const cancelOrder = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const orderId = req.params.id;
+
+    const order = await Order.findOne({ _id: orderId, userId });
+    if (!order) {
+      return res.status(404).json({ message: "No orders found" });
+    }
+
+    if (order.status !== "pending") {
+      return res
+        .status(400)
+        .json({ message: "Can not delete this reques at this stage" });
+    }
+
+    order.status = "cancelled";
+    await Order.save();
+
+    res.status(200).json({ message: "Order cancelled succesfully" });
+  } catch (error) {
+    console.error("Error while deleting order :", error.message);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const updateOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({ message: "status field required" });
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.status(200).json({
+      message: "Order updated successfully",
+      order: updatedOrder,
+    });
+  } catch (error) {
+    console.error("Error while updating order:", error.message);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
