@@ -57,3 +57,19 @@ export const viewMyOrder = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+export const viewAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("userId", "name email") 
+      .populate("items.productId", "name price")
+      .sort({ createdAt: -1 });
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found" });
+    }
+    res.status(200).json({ message: "Order fetched succesfully", orders });
+  } catch (error) {
+    console.error("Error in fetching orders", error.message);
+    res.status(500).json({ message: "Somthing went wrong" });
+  }
+};
