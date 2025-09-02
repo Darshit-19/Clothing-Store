@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import Product from '../models/product.model'
+import Product from '../models/product.model.js'
 
 export const calculateCartTotal = async (items) => {
     let total = 0
