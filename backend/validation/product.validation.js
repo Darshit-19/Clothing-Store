@@ -65,3 +65,13 @@ export const updateProductSchema = z.object({
     )
     .optional(),
 });
+
+export const placeOrderScehma = z.object({
+  productId : z.string({ required_error: "Product Id is required" }),
+  selectedSize : z.enum(ALLOWED_SIZES , {
+    errorMap : () => ({
+      message : `Invalid size provided . Allowed sizes are ${ALLOWED_SIZES.join(',')}`
+    })
+  }),
+  quantity: z.number({required_error: 'Quantity is required'}),
+})
