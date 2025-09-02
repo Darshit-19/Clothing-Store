@@ -32,6 +32,7 @@ const cartSchema = new mongoose.Schema(
       enum: ["active", "ordered"],
       default: "active",
     },
+    total: Number,
   },
   {
     timestamps: true,
