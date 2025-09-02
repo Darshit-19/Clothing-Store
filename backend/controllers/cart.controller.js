@@ -1,5 +1,6 @@
 import Cart from "../models/cart.model.js";
 import Product from "../models/product.model.js";
+import { calculateCartTotal } from "../utils/cart.utils.js";
 
 export const addToCart = async (req, res) => {
   try {
@@ -49,8 +50,11 @@ export const addToCart = async (req, res) => {
       cart.items.push({ productId, selectedSize, quantity });
     }
 
+    //calculate the cart total
+    cart.total = await calculateCartTotal(cart.items)
+
     await cart.save();
-     await cart.populate("items.productId", "name")
+    await cart.populate("items.productId", "name")
     res.status(200).json({ message: "Product added to cart", cart });
   } catch (error) {
     console.error("Error adding product to cart:", error.message);
@@ -121,6 +125,9 @@ export const updateCart = async (req, res) => {
       cart.items.push({ productId, selectedSize: size, quantity });
     }
 
+    //calculate the cart total
+    cart.total = await calculateCartTotal(cart.items)
+
     await cart.save();
 
     const updatedCart = await Cart.findOne({ userId }).populate(
@@ -143,6 +150,10 @@ export const deleteCart = async (req, res) => {
       return res.status(404).json({ message: "No active cart for the user" });
     }
     cart.items = [];
+
+    //calculate the cart total
+    cart.total = await calculateCartTotal(cart.items)
+    
     await cart.save();
 
     res.status(200).json({ message: "Cart deleted succesfully" });
